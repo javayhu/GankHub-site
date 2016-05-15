@@ -70,6 +70,7 @@ public class WebServer {
      * @param keyword 搜索词
      */
     private Object search(String keyword) {
+        logger.info("search:" + keyword);
         List<GankItem> gankItems = new ArrayList<GankItem>();
         try {
             List<Document> documents = gankHub.search(keyword);
@@ -85,6 +86,6 @@ public class WebServer {
         return gankItems;
     }
 
-    //
+    //如何关闭呢
 
 }

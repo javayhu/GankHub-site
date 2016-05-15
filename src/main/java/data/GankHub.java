@@ -63,7 +63,6 @@ public class GankHub {
      * 全文检索
      */
     public List<Document> search(String keyword) throws Exception {
-        logger.info("search:" + keyword);
         // Parse a simple query that searches for "keyword"
         QueryParser parser = new QueryParser(FIELD_TITLE, analyzer);
         Query query = parser.parse(keyword);
