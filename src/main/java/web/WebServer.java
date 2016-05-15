@@ -1,0 +1,90 @@
+package web;
+
+import data.GankHub;
+import model.GankItem;
+import org.apache.lucene.document.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import spark.ModelAndView;
+import tool.JsonTransformer;
+import tool.VelocityTemplateEngine;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static spark.Spark.*;
+
+/**
+ * web服务
+ */
+public class WebServer {
+
+    private Logger logger = LoggerFactory.getLogger(WebServer.class);
+    private GankHub gankHub;
+
+    public static void main(String[] args) {
+        WebServer server = new WebServer();
+        server.startServer();
+    }
+
+    /**
+     * 启动服务器
+     */
+    private void startServer() {
+        //设置端口
+        if (System.getenv("PORT") != null) {
+            port(Integer.valueOf(System.getenv("PORT")));
+        }
+        //web
+        staticFileLocation("/public");
+
+        //界面的参数
+        HashMap<String, String> countMap = new HashMap<>();
+        countMap.put("ArticleCount", "100");
+        countMap.put("LibraryCount", "200");
+        countMap.put("OtherCount", "300");
+
+        //index page
+        get("/", (request, response) -> {
+            Map<String, Object> model = new HashMap<String, Object>();
+            model.put("stat", countMap);
+
+            // The vm files are located under the resources directory
+            return new ModelAndView(model, "public/html/index.vm");
+        }, new VelocityTemplateEngine());
+
+        //search action
+        post("/search", (request, response) -> search(request.queryParams("keyword")), new JsonTransformer());
+
+        gankHub = new GankHub();
+        gankHub.startService();
+
+        logger.info("server started");
+    }
+
+    /**
+     * 搜索
+     *
+     * @param keyword 搜索词
+     */
+    private Object search(String keyword) {
+        List<GankItem> gankItems = new ArrayList<GankItem>();
+        try {
+            List<Document> documents = gankHub.search(keyword);
+            documents.forEach(document -> {
+                GankItem item = new GankItem();
+                item.setTitle(document.getField(GankHub.FIELD_TITLE).stringValue());
+                gankItems.add(item);
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return gankItems;
+    }
+
+    //
+
+}
