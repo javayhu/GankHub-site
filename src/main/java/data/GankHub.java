@@ -37,8 +37,10 @@ public class GankHub {
     private DirectoryReader reader;//索引内容读取器
     private IndexSearcher searcher;//搜索器
 
+    public static final String FIELD_URL = "url";
     public static final String FIELD_TYPE = "type";
     public static final String FIELD_TITLE = "title";
+    public static final String FIELD_SOURCE = "source";
     public static final String FIELD_CONTENT = "content";
 
     public GankHub() {
@@ -64,7 +66,7 @@ public class GankHub {
      */
     public List<Document> search(String keyword) throws Exception {
         // Parse a simple query that searches for "keyword"
-        QueryParser parser = new QueryParser(FIELD_TITLE, analyzer);
+        QueryParser parser = new QueryParser(FIELD_TITLE, analyzer);//默认是基于标题的
         Query query = parser.parse(keyword);
 
         List<Document> documents = new ArrayList<>();
@@ -97,14 +99,17 @@ public class GankHub {
 
         for (GankItem item : items) {
             Document doc = new Document();
-            if (null != item.getType()) {
-                doc.add(new Field(FIELD_TYPE, item.getType(), TextField.TYPE_STORED));
+            if (null != item.getUrl()) {
+                doc.add(new Field(FIELD_URL, item.getUrl(), TextField.TYPE_STORED));
             }
             if (null != item.getTitle()) {
                 doc.add(new Field(FIELD_TITLE, item.getTitle(), TextField.TYPE_STORED));
             }
             if (null != item.getContent()) {
-                doc.add(new Field(FIELD_CONTENT, item.getContent(), TextField.TYPE_STORED));
+                doc.add(new Field(FIELD_CONTENT, item.getContent(), TextField.TYPE_NOT_STORED));
+            }
+            if (null != item.getSource()) {
+                doc.add(new Field(FIELD_SOURCE, item.getSource(), TextField.TYPE_STORED));
             }
             writer.addDocument(doc);
         }
@@ -119,11 +124,8 @@ public class GankHub {
         GankHub gankHub = new GankHub();
         try {
             gankHub.startService();
-
             gankHub.search("动画");
-
             gankHub.stopService();
-
         } catch (Exception e) {
             e.printStackTrace();
         }

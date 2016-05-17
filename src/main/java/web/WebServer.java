@@ -76,7 +76,10 @@ public class WebServer {
             List<Document> documents = gankHub.search(keyword);
             documents.forEach(document -> {
                 GankItem item = new GankItem();
+                item.setTags(null);
+                item.setUrl(document.getField(GankHub.FIELD_URL).stringValue());
                 item.setTitle(document.getField(GankHub.FIELD_TITLE).stringValue());
+                item.setSource(document.getField(GankHub.FIELD_SOURCE).stringValue());
                 gankItems.add(item);
             });
         } catch (Exception e) {
