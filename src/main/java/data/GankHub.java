@@ -38,7 +38,6 @@ public class GankHub {
     private IndexSearcher searcher;//搜索器
 
     public static final String FIELD_URL = "url";
-    public static final String FIELD_TYPE = "type";
     public static final String FIELD_TITLE = "title";
     public static final String FIELD_SOURCE = "source";
     public static final String FIELD_CONTENT = "content";

@@ -6,7 +6,11 @@ GankHub项目主要作用是汇聚各种不同来源的干货技术文章然后�
 
 This project is still under development. 
 
+目前包含的数据有[gank.io](http://gank.io)和[Android Weekly](http://androidweekly.net)从103期之后的干货数据，项目目前仍在开发中。
+
 ## API 
+
+![img](gankhub-search.png)
 
 
 
